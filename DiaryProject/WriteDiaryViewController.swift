@@ -7,6 +7,11 @@
 
 import UIKit
 
+enum DiaryEditMode {
+    case new
+    case edit(Diary, IndexPath)
+}
+
 protocol WriteDiaryViewDelegate : AnyObject {
     func registerDiary(diary: Diary)
 }
@@ -23,11 +28,14 @@ class WriteDiaryViewController: UIViewController {
     
     weak var delegate: WriteDiaryViewDelegate?
     
+    var diaryEditMode: DiaryEditMode = .new
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.configDatePicker()
         self.configInputField()
         self.configContentsTextView()
+        self.configEditMode()
         self.confirmButton.isEnabled = false
     }
     
@@ -52,11 +60,32 @@ class WriteDiaryViewController: UIViewController {
         self.contentsTextView.layer.cornerRadius = 5.0
     }
     
+    private func configEditMode(){
+        switch self.diaryEditMode {
+        case let .edit(diary, _) :
+            self.titleTextField.text = diary.title
+            self.contentsTextView.text = diary.contents
+            self.dateTextField.text = dateToString(date: diary.date)
+            self.diaryDate = diary.date
+            self.confirmButton.title = "수정"
+        
+        default :
+            break
+        }
+    }
+    
     private func validateInputField(){
         self.confirmButton.isEnabled =
             !(self.titleTextField.text?.isEmpty ?? true)
          && !(self.dateTextField.text?.isEmpty ?? true)
          && !self.contentsTextView.text.isEmpty
+    }
+    
+    private func dateToString(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yy년 MM월 dd일(EEEEE)"
+        formatter.locale = Locale(identifier: "ko_KR")
+        return formatter.string(from: date)
     }
     
     @IBAction func tapConfirmBtn(_ sender: UIBarButtonItem) {
@@ -65,7 +94,20 @@ class WriteDiaryViewController: UIViewController {
         guard let date = self.diaryDate else { return }
         
         let diary = Diary(title: title, contents: contents, date: date, isStar: false)
-        self.delegate?.registerDiary(diary: diary)
+        
+        switch self.diaryEditMode {
+        case .new :
+            self.delegate?.registerDiary(diary: diary)
+            
+        case let .edit(_, IndexPath) :
+            NotificationCenter.default.post(
+                name: NSNotification.Name("editDiary"),
+                object: diary,
+                userInfo: [
+                    "indexPath.row" : IndexPath.row
+                ]
+            )
+        }
         self.navigationController?.popViewController(animated: true)
     }
     

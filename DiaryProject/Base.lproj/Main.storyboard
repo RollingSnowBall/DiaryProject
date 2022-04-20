@@ -123,12 +123,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9rR-rY-CLp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1362" y="-82"/>
+            <point key="canvasLocation" x="1381" y="-82"/>
         </scene>
         <!--일기 작성-->
         <scene sceneID="hHT-2I-dhm">
             <objects>
-                <viewController id="83i-zi-Qhc" customClass="WriteDiaryViewController" customModule="DiaryProject" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WriteDiaryViewController" id="83i-zi-Qhc" customClass="WriteDiaryViewController" customModule="DiaryProject" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="IrY-qQ-POC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -216,7 +216,6 @@
         <!--즐겨찾기-->
         <scene sceneID="95n-2h-cZs">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="RZD-te-rI6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController id="qe7-uR-KLf" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="즐겨찾기" image="star" catalog="system" selectedImage="star.fill" id="Dnt-zM-v73"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="7G0-oS-7OJ">
@@ -227,6 +226,7 @@
                         <segue destination="3w4-rE-Syo" kind="relationship" relationship="rootViewController" id="WZl-lF-hIj"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RZD-te-rI6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="554" y="570"/>
         </scene>
@@ -297,12 +297,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rEd-o7-CrG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1361" y="570"/>
+            <point key="canvasLocation" x="1380" y="570"/>
         </scene>
         <!--Diary Detail View Controller-->
         <scene sceneID="u6s-SC-wXy">
             <objects>
-                <viewController id="3jm-nI-xX9" customClass="DiaryDetailViewController" customModule="DiaryProject" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DiaryDetailViewController" id="3jm-nI-xX9" customClass="DiaryDetailViewController" customModule="DiaryProject" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dF6-h4-Ppf">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -364,12 +364,18 @@
                                         <rect key="frame" x="0.0" y="0.0" width="48.5" height="31"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="수정"/>
+                                        <connections>
+                                            <action selector="tapEditBtn:" destination="3jm-nI-xX9" eventType="touchUpInside" id="nlc-yT-AZJ"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YIo-P1-yOO">
                                         <rect key="frame" x="98.5" y="0.0" width="48.5" height="31"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="삭제"/>
+                                        <connections>
+                                            <action selector="tapDeleteBtn:" destination="3jm-nI-xX9" eventType="touchUpInside" id="kLI-CR-tAl"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                             </stackView>
@@ -393,6 +399,11 @@
                             <constraint firstItem="NAC-LB-wMS" firstAttribute="trailing" secondItem="aMN-ws-eX9" secondAttribute="trailing" constant="24" id="ys2-v1-hnU"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="contentLabel" destination="9iI-Ng-Vif" id="qOd-2i-XMp"/>
+                        <outlet property="dateLabel" destination="6J0-tl-jLG" id="AWx-3F-RsY"/>
+                        <outlet property="titleLabel" destination="aTl-3k-9y4" id="yhb-yI-DdV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="42m-zz-EhE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
