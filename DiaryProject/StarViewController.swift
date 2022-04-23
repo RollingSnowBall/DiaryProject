@@ -16,12 +16,34 @@ class StarViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configCollectionView()
+        loadStarDiaryList()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(editDiaryNoti(_:)),
+            name: NSNotification.Name("editDiary"),
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(deleteDiaryNoti(_:)),
+            name: NSNotification.Name("deleteDiary"),
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(starDiaryNoti(_:)),
+            name: NSNotification.Name("starDiary"),
+            object: nil
+        )
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        loadStarDiaryList()
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        loadStarDiaryList()
+//    }
     
     private func configCollectionView(){
         collectionView.collectionViewLayout = UICollectionViewFlowLayout()
@@ -35,19 +57,20 @@ class StarViewController: UIViewController {
         
         guard let data = userDefualt.object(forKey: "diaryList") as? [[String: Any]] else { return }
         self.diaryList = data.compactMap{
+            guard let uuidString = $0["uuidString"] as? String else { return nil }
             guard let title = $0["title"] as? String else { return nil }
             guard let contents = $0["contents"] as? String else { return nil }
             guard let date = $0["date"] as? Date else { return nil }
             guard let isStar = $0["isStar"] as? Bool else { return nil }
             
-            return Diary(title: title, contents: contents, date: date, isStar: isStar)
+            return Diary(uuidString: uuidString, title: title, contents: contents, date: date, isStar: isStar)
         }.filter({
             $0.isStar == true
         }).sorted(by: {
             $0.date.compare($1.date) == .orderedDescending
         })
         
-        self.collectionView.reloadData()
+        //self.collectionView.reloadData()
     }
     
     private func dateToString(date: Date) -> String {
@@ -55,6 +78,51 @@ class StarViewController: UIViewController {
         formatter.dateFormat = "yy년 MM월 dd일(EEEEE)"
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: date)
+    }
+    
+    @objc func editDiaryNoti(_ noti: Notification){
+        guard let diary = noti.object as? Diary else { return }
+        //guard let row = noti.userInfo?["indexPath.row"] as? Int else { return }
+        guard let idx = self.diaryList.firstIndex(where: { $0.uuidString == diary.uuidString }) else { return }
+        
+        //self.diaryList[row] = diary
+        self.diaryList[idx] = diary
+        self.diaryList = self.diaryList.sorted(by: {
+            $0.date.compare($1.date) == .orderedDescending
+        })
+        
+        self.collectionView.reloadData()
+    }
+    
+    @objc func starDiaryNoti(_ noti: Notification){
+        guard let starDiary = noti.object as? [String: Any] else { return }
+        guard let isStar = starDiary["isStar"] as? Bool else { return }
+        //guard let indexPath = starDiary["indexPath"] as? IndexPath else { return }
+        guard let uuidString = starDiary["uuidString"] as? String else { return }
+        guard let diary = starDiary["diary"] as? Diary else { return }
+        
+        if isStar{
+            self.diaryList.append(diary)
+            self.diaryList = self.diaryList.sorted(by: {
+                $0.date.compare($1.date) == .orderedDescending
+            })
+            self.collectionView.reloadData()
+        } else {
+            guard let idx = self.diaryList.firstIndex(where: { $0.uuidString == uuidString }) else { return }
+            self.diaryList.remove(at: idx)
+            self.collectionView.reloadData()
+            //self.collectionView.deleteItems(at: [IndexPath(row: idx, section: 0)])
+        }
+    }
+    
+    @objc func deleteDiaryNoti(_ noti: Notification){
+        //guard let indexPath = noti.object as? IndexPath else { return }
+        guard let uuidString = noti.object as? String else { return }
+        guard let idx = self.diaryList.firstIndex(where: { $0.uuidString == uuidString }) else { return }
+        
+        self.diaryList.remove(at: idx)
+        self.collectionView.reloadData()
+        //self.collectionView.deleteItems(at: [IndexPath(row: idx, section: 0)])
     }
 }
 
