@@ -41,12 +41,6 @@ class DiaryDetailViewController: UIViewController {
             name: NSNotification.Name("editDiary"),
             object: nil
         )
-        
-        NotificationCenter.default.post(
-            name: NSNotification.Name("deleteDiary"),
-            object: self.diary?.uuidString,
-            userInfo: nil
-        )
     }
     
     private func configView(){
